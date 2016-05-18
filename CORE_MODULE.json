@@ -1,0 +1,18 @@
+{
+  "name": "stepper",
+  "description": "Stepper",
+  "chip": "STM32F303CB",
+  "required_packages": [
+    "common_msgs",
+    "led"
+  ],
+  "chibios_components": [
+    "rt",
+    "hal",
+    "adc",
+    "ext",
+    "pal",
+    "spi",
+    "syscalls"
+  ]
+}
