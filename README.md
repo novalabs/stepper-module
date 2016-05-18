@@ -1,1 +1,2 @@
-# udc-module
+# stepper-module
+Core Stepper Module
