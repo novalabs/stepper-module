@@ -55,14 +55,9 @@ static EXTConfig extcfg = {   {
 static Core::HW::Pad_<Core::HW::GPIO_B, GPIOB_FLAG> _flag_pad;
 static Core::HW::Pad_<Core::HW::GPIO_B, GPIOB_STBY> _stby_pad;
 
-// TROVA LA DIFFERENZA QUI SOTTO... PERCHE KRISTO IL PRIMO E' A 0x0???
-static drivers::L6470 stepper(SPI_DEVICE, BUSY_EXT_CHANNEL, _flag_pad, _stby_pad);
 static drivers::L6470 _stepper(SPI_DEVICE, BUSY_EXT_CHANNEL, _flag_pad, _stby_pad);
 
-// SECONDO ME FA UNA PORCHERIA QUI... Module::stepper e stepper LI PRENDE PER LA STESSA COSA
-// E CREA UN RFERENCE AD UN REFERENCE NON INIZIALIZZATO... BASTA CAMBIARE NOME IN QUALCOSA DI ALTRO E VA.
 drivers::L6470& Module::stepper = _stepper;
-
 
 /* MW and RTCAN */
 static THD_WORKING_AREA(wa_info, 1024);
