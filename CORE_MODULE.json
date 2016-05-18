@@ -4,7 +4,8 @@
   "chip": "STM32F303CB",
   "required_packages": [
     "common_msgs",
-    "led"
+    "led",
+    "L6470_driver"
   ],
   "chibios_components": [
     "rt",
