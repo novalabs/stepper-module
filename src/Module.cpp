@@ -62,7 +62,7 @@ core::L6470_driver::L6470& Module::stepper = _stepper;
 
 /* MW and RTCAN */
 static core::os::Thread::Stack<1024> management_thread_stack;
-static core::mw::RTCANTransport      rtcantra(RTCAND1);
+static core::mw::RTCANTransport      rtcantra(&RTCAND1);
 
 RTCANConfig rtcan_config = {
    1000000, 100, 60
