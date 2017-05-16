@@ -5,7 +5,8 @@
   "required_packages": [
     "common_msgs",
     "led",
-    "L6470_driver"
+    "L6470_driver",
+    "snippets"
   ],
   "chibios_components": [
     "rt",
