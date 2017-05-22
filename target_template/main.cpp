@@ -1,125 +1,72 @@
+/* STEPPER Module template file
+ *
+ * THIS IS QUITE UNFINISHED...
+ */
+
 #include <ModuleConfiguration.hpp>
 #include <Module.hpp>
-#include <cstdio>
-#include <core/mw/Publisher.hpp>
-
-#define STATUS_TH_SD                   0x0800 // Thermal shutdown
-#define STATUS_OCD                     0x1000 // Overcurrent detected
-
-// --- MESSAGES ---------------------------------------------------------------
-#include <core/common_msgs/Led.hpp>
-#include <core/common_msgs/String64.hpp>
-
-// --- NODES ------------------------------------------------------------------
-#include <core/led/Subscriber.hpp>
 
 // --- BOARD IMPL -------------------------------------------------------------
 #include <core/L6470_driver/L6470.hpp>
 
-// *** DO NOT MOVE ***
+// --- MODULE -----------------------------------------------------------------
 Module module;
+
+// *** DO NOT MOVE THE CODE ABOVE THIS COMMENT *** //
+
+// --- MESSAGES ---------------------------------------------------------------
+#include <core/common_msgs/Led.hpp>
+
+// --- NODES ------------------------------------------------------------------
+#include <core/led/Subscriber.hpp>
 
 // --- TYPES ------------------------------------------------------------------
 
+// --- CONFIGURATIONS ---------------------------------------------------------
+core::led::SubscriberConfiguration led_subscriber_configuration_default;
+
 // --- NODES ------------------------------------------------------------------
-core::led::Subscriber led_subscriber("led_subscriber", core::os::Thread::PriorityEnum::LOWEST);
+core::led::Subscriber led_subscriber("led_sub", core::os::Thread::PriorityEnum::LOWEST);
 
-
-static THD_WORKING_AREA(myThreadWorkingArea, 512);
-static THD_FUNCTION(myThread, arg) {
-   core::mw::Node node("test_pub");
-   core::mw::Publisher<core::common_msgs::String64> pub;
-   core::common_msgs::String64* msgp;
-
-   (void)arg;
-   chRegSetThreadName("test_pub");
-
-   node.advertise(pub, "test");
-   chThdSleepMilliseconds(500);
-
-   while (true) {
-      uint16_t status = module.stepper.getStatus();
-
-      if (!(status & STATUS_TH_SD)) {
-         if (pub.alloc(msgp)) {
-            sprintf(msgp->data._data, "\nTH_SD\n");
-            pub.publish(msgp);
-         }
-      } else if (!(status & STATUS_OCD)) {
-         if (pub.alloc(msgp)) {
-            sprintf(msgp->data._data, "\nOCD\n");
-            pub.publish(msgp);
-         }
-      } else {
-         if (pub.alloc(msgp)) {
-            sprintf(msgp->data._data, ".");
-            pub.publish(msgp);
-         }
-      }
-
-      core::os::Thread::sleep(core::os::Time::ms(10));
-   }
-}
+// --- DEVICE CONFIGURATION ---------------------------------------------------
 
 // --- MAIN -------------------------------------------------------------------
 extern "C" {
-   int
-   main()
-   {
-      module.initialize();
+    int
+    main()
+    {
+        module.initialize();
 
-      // Add nodes to the node manager (== board)...
-      module.add(led_subscriber);
+        // Device configurations
 
-      // Module configuration
+        // Default configuration
+        led_subscriber_configuration_default.topic = "led";
 
-      // Nodes configuration
-      core::led::SubscriberConfiguration led_subscriber_configuration;
-      led_subscriber_configuration.topic = "led";
-      led_subscriber.setConfiguration(led_subscriber_configuration);
+        // Add configurable objects to the configuration manager...
+        module.configurations().add(led_subscriber, led_subscriber_configuration_default);
 
-      // ... and let's play!
-      module.setup();
-      module.run();
+        // ... and load the configuration
+        module.configurations().loadFrom(module.configurationStorage());
 
-      (void)chThdCreateStatic(myThreadWorkingArea, sizeof(myThreadWorkingArea), NORMALPRIO, myThread, NULL);
+        // Add nodes to the node manager...
+        module.nodes().add(led_subscriber);
 
-      module.stepper.resetPosition();
+        // ... and let's play!
+        module.nodes().setup();
+        module.nodes().run();
 
-      // Is everything going well?
-      for (;;) {
-         if (!module.isOk()) {
-            module.halt("This must not happen!");
-         }
+        // Is everything going well?
+        for (;;) {
+            if (!module.nodes().areOk()) {
+                module.halt("This must not happen!");
+            }
 
-         module.keepAlive();
+            core::os::Thread::sleep(core::os::Time::ms(500));
 
-#if 0
-         module.stepper.run(1000);
-         core::os::Thread::sleep(core::os::Time::ms(500));
-#endif
+            // Remember to feed the (watch)dog!
+            module.keepAlive();
+        }
 
-#if 1
-         module.stepper.move(200 * 128 / 4);
-         core::os::Thread::sleep(core::os::Time::ms(500));
-
-         module.stepper.move(-200 * 128 / 4);
-         core::os::Thread::sleep(core::os::Time::ms(500));
-#endif
-
-#if 0
-         //module.stepper.resetPosition();
-
-         module.stepper.moveto(200 * 128 / 2);
-         core::os::Thread::sleep(core::os::Time::ms(2000));
-
-         module.stepper.moveto(-200 * 128 / 2);
-         core::os::Thread::sleep(core::os::Time::ms(2000));
-#endif
-
-//			Module::led.toggle();
-      }
-
-      return core::os::Thread::OK;
-   } // main
+        return core::os::Thread::OK;
+    } // main
 }
