@@ -18,29 +18,18 @@ class L6470;
 }
 }
 
-#if CORE_USE_CONFIGURATION_STORAGE
-namespace core {
-namespace mw {
-class CoreConfigurationStorage;
-}
-}
-#endif
-
 class Module:
     public core::mw::CoreModule
 {
 public:
 // --- DEVICES ----------------------------------------------------------------
     static core::L6470_driver::L6470& stepper;
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
     static bool
     initialize();
 
 
-   #if CORE_USE_CONFIGURATION_STORAGE
-    static core::mw::CoreConfigurationStorage& configurationStorage;
-   #endif
     Module();
     virtual ~Module() {}
 };

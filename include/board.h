@@ -79,7 +79,7 @@
 #define GPIOB_BUSY                  2U
 #define GPIOB_JTAG_TDO              3U
 #define GPIOB_PIN4                  4U
-#define GPIOB_LED                  5U
+#define GPIOB_LED                   5U
 #define GPIOB_I2C_SCL               6U
 #define GPIOB_I2C_SDA               7U
 #define GPIOB_CAN_RX                8U
@@ -90,6 +90,9 @@
 #define GPIOB_SPI_SCK               13U
 #define GPIOB_SPI_MISO              14U
 #define GPIOB_SPI_MOSI              15U
+
+#define LED_GPIO	GPIOB
+#define LED_PIN		5
 
 #define GPIOC_PIN0                  0U
 #define GPIOC_PIN1                  1U
