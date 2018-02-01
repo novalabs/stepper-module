@@ -1,2 +1,2 @@
-# stepper-module
-Core Stepper Module
+# Nova Core Stepper module
+Stepper motor control module

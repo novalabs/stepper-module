@@ -1,6 +1,6 @@
 {
   "name": "stepper",
-  "description": "Stepper",
+  "description": "Nova Core Stepper module",
   "chip": "STM32F303CC",
   "required_packages": [
     "stm32_flash",
